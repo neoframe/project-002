@@ -1,6 +1,8 @@
 import { Game, Scale, AUTO } from 'phaser';
 
 import { DEBUG } from './utils/settings';
+import MainScene from './scenes/main';
+
 import './index.css';
 
 const _ = new Game({
@@ -22,7 +24,7 @@ const _ = new Game({
     autoCenter: Scale.CENTER_BOTH,
   },
   pixelArt: true,
-  scene: [],
+  scene: [MainScene],
   plugins: {
     scene: [],
   },
