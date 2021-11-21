@@ -9,7 +9,16 @@ const _ = new Game({
   type: AUTO,
   backgroundColor: 0x000000,
   physics: {
-    default: 'arcade',
+    default: 'matter',
+    matter: {
+      gravity: { x: 0, y: 0 },
+      ...(DEBUG ? {
+        debug: {
+          showBody: true,
+          showStaticBody: true,
+        },
+      } : {}),
+    },
     arcade: {
       gravity: { x: 0, y: 0 },
       ...(DEBUG ? {

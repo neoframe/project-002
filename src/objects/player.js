@@ -30,7 +30,10 @@ export default class Player extends GameObjects.Sprite {
 
   create () {
     this.setTexture('player', Player.FRAMES.IDLE.BOTTOM[0]);
-    this.scene.physics.add.existing(this);
+    this.scene.matter.add.gameObject(this, {
+      ignoreGravity: true,
+    });
+    this.scene.matter.body.setInertia(this.body, Infinity);
     this.scene.add.existing(this);
 
     // Init keys
@@ -67,23 +70,23 @@ export default class Player extends GameObjects.Sprite {
 
   move () {
     if (this.scene.cursors.left.isDown || this.scene.cursors.q.isDown) {
-      this.body.setVelocityX(-PLAYER_SPEED);
+      this.scene.matter.setVelocityX(this.body, -PLAYER_SPEED);
       this.direction = 'left';
     } else if (this.scene.cursors.right.isDown || this.scene.cursors.d.isDown) {
-      this.body.setVelocityX(PLAYER_SPEED);
+      this.scene.matter.setVelocityX(this.body, PLAYER_SPEED);
       this.direction = 'right';
     } else {
-      this.body.setVelocityX(0);
+      this.scene.matter.setVelocityX(this.body, 0);
     }
 
     if (this.scene.cursors.up.isDown || this.scene.cursors.z.isDown) {
-      this.body.setVelocityY(-PLAYER_SPEED);
+      this.scene.matter.setVelocityY(this.body, -PLAYER_SPEED);
       this.direction = 'top';
     } else if (this.scene.cursors.down.isDown || this.scene.cursors.s.isDown) {
-      this.body.setVelocityY(PLAYER_SPEED);
+      this.scene.matter.setVelocityY(this.body, PLAYER_SPEED);
       this.direction = 'bottom';
     } else {
-      this.body.setVelocityY(0);
+      this.scene.matter.setVelocityY(this.body, 0);
     }
   }
 

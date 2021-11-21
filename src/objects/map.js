@@ -2,6 +2,7 @@
 import { GameObjects, Geom } from 'phaser';
 import * as tilesets from '../assets/images';
 import * as maps from '../assets/maps';
+import { DEBUG } from '../utils/settings';
 
 export default class Map {
   static TILESETS = ['farm', 'interiorBasic'];
@@ -61,31 +62,38 @@ export default class Map {
 
     this.tilemap.objects.forEach(l => {
       if (this.hasProperty(l.properties, 'collides', true)) {
-        console.log(l.objects);
         l.objects.forEach(o => {
-          const polygon = new GameObjects
-            .Polygon(this.scene, o.x, o.y, o.polygon, 0x00ff00);
 
-          this.scene.add.existing(polygon);
-          this.scene.physics.add.existing(polygon);
-          // polygon.setVisible(false);
-          polygon.body.allowGravity = false;
-          polygon.body.immovable = true;
+          if (DEBUG) {
+            const polygon = new GameObjects
+              .Polygon(this.scene, o.x, o.y, o.polygon, 0x00ff00)
+              .setDepth(Infinity)
+              .setOrigin(0)
+              .setAlpha(0.5);
+
+            this.scene.add.existing(polygon);
+          }
+
+          const polygon = this.scene.matter.add
+            .fromVertices(o.x, o.y, o.polygon, {
+              ignoreGravity: true,
+              isStatic: true,
+            });
+
           this.obstacles.push(polygon);
-
-          console.log(polygon);
         });
       }
 
       if (this.hasProperty(l.properties, 'player', true)) {
         this.playerDepth = this.getProperty(l.properties, 'depth');
-        this.playerStartPosition = l.objects.find(o => this.hasProperty(o.properties, 'player', true));
+        this.playerStartPosition = l.objects
+          .find(o => this.hasProperty(o.properties, 'player', true));
       }
     });
     
     console.log(this.playerStartPosition);
 
-    this.scene.physics.add.collider(this.player, this.obstacles);
+    // this.scene.physics.add.collider(this.player, this.obstacles);
   }
 
   getProperty (props, name) {
