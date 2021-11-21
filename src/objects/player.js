@@ -4,6 +4,8 @@ import charset from '../assets/images/charset.png';
 import { PLAYER_SPEED } from '../utils/settings';
 
 export default class Player extends GameObjects.Sprite {
+  static WIDTH = 32;
+  static HEIGHT = 64;
   static FRAMES = {
     IDLE: {
       RIGHT: [0, 5],
@@ -20,6 +22,7 @@ export default class Player extends GameObjects.Sprite {
   };
 
   direction = 'bottom';
+  canMove = true;
 
   constructor (scene, ...args) {
     super(scene, ...args);
@@ -32,6 +35,8 @@ export default class Player extends GameObjects.Sprite {
     this.setTexture('player', Player.FRAMES.IDLE.BOTTOM[0]);
     this.scene.matter.add.gameObject(this, {
       ignoreGravity: true,
+      shape: { type: 'rectangle', width: 31, height: 38 },
+      render: { sprite: { xOffset: 0, yOffset: 13 / Player.HEIGHT } },
     });
     this.scene.matter.body.setInertia(this.body, Infinity);
     this.scene.add.existing(this);
@@ -69,6 +74,13 @@ export default class Player extends GameObjects.Sprite {
   }
 
   move () {
+    if (!this.canMove) {
+      this.anims.stop();
+      this.scene.matter.setVelocity(this.body, 0, 0);
+
+      return;
+    }
+
     if (this.scene.cursors.left.isDown || this.scene.cursors.q.isDown) {
       this.scene.matter.setVelocityX(this.body, -PLAYER_SPEED);
       this.direction = 'left';

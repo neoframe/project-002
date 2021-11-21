@@ -1,4 +1,4 @@
-import { Scene } from 'phaser';
+import { Cameras, Scene } from 'phaser';
 
 import { ZOOM } from '../utils/settings';
 import Player from '../objects/player';
@@ -16,16 +16,50 @@ export default class MainScene extends Scene {
 
   create () {
     this.player.create();
-    this.map.create();
 
-    console.log(this.map.getPlayerDepth());
-
-    this.player.setDepth(this.map.getPlayerDepth());
     this.cameras.main.startFollow(this.player, true);
     this.cameras.main.setZoom(ZOOM);
+
+    this.map.create();
+
+    this.map.events.once('startPosition', ({ x, y }) => {
+      this.player.setPosition(x, y);
+    });
+
+    this.player.canMove = false;
+    this.map.init(1);
+    this.onMapReady();
   }
 
   update () {
     this.player.update();
+  }
+
+  goTo (mapId) {
+    this.player.canMove = false;
+    this.map.events.once('startPosition', ({ x, y }) => {
+      this.player.setPosition(x, y);
+    });
+
+    this.cameras.main.fadeOut(500);
+    this.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+      this.map.init(mapId, { from: this.map.id });
+      this.onMapReady();
+    });
+  }
+
+  onMapReady () {
+    this.player.setDepth(this.map.getPlayerDepth());
+    this.cameras.main
+      .setBounds(0, 0, this.map.getWidth(), this.map.getHeight());
+
+    this.map.events.once('goTo', mapId => {
+      this.goTo(mapId);
+    });
+
+    this.cameras.main.fadeIn(500);
+    this.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
+      this.player.canMove = true;
+    });
   }
 }
