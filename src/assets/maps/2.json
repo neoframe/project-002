@@ -111,7 +111,7 @@
          "name":"collisions",
          "objects":[
                 {
-                 "height":24.3620196114258,
+                 "height":15.5068646462139,
                  "id":2,
                  "name":"",
                  "rotation":0,
@@ -133,7 +133,7 @@
                  "y":512.578712012898
                 }, 
                 {
-                 "height":87.6098926170414,
+                 "height":85.501522387229,
                  "id":4,
                  "name":"",
                  "rotation":0,
@@ -141,7 +141,7 @@
                  "visible":true,
                  "width":16.1226538496638,
                  "x":943.327350713351,
-                 "y":560.642472545858
+                 "y":549.257273304871
                 }, 
                 {
                  "height":34.6789158275789,
@@ -155,7 +155,7 @@
                  "y":511.666108964804
                 }, 
                 {
-                 "height":25.552885346637,
+                 "height":16.2760563354627,
                  "id":6,
                  "name":"",
                  "rotation":0,
@@ -221,7 +221,7 @@
                  "y":384.380253706251
                 }, 
                 {
-                 "height":100.489072290998,
+                 "height":86.5738287742364,
                  "id":13,
                  "name":"",
                  "rotation":0,
@@ -239,7 +239,7 @@
                  "value":true
                 }],
          "type":"objectgroup",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }, 
@@ -250,7 +250,7 @@
          "name":"actions",
          "objects":[
                 {
-                 "height":12.2268072749503,
+                 "height":5.9016965855133,
                  "id":12,
                  "name":"",
                  "properties":[
@@ -267,9 +267,9 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":33.2416322787712,
-                 "x":976.234143359315,
-                 "y":690.814611034694
+                 "width":59.8070971744069,
+                 "x":961.897225796591,
+                 "y":697.139721724131
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -281,7 +281,7 @@
  "nextobjectid":14,
  "orientation":"orthogonal",
  "renderorder":"left-down",
- "tiledversion":"1.4.3",
+ "tiledversion":"1.7.2",
  "tileheight":32,
  "tilesets":[
         {
@@ -299,6 +299,6 @@
         }],
  "tilewidth":32,
  "type":"map",
- "version":1.4,
+ "version":"1.6",
  "width":50
 }

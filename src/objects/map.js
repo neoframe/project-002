@@ -4,8 +4,6 @@ import * as tilesets from '../assets/images';
 import * as maps from '../assets/maps';
 
 export default class Map {
-  static TILESETS = ['farm', 'interiorBasic'];
-  static MAPS = Array.from({ length: 2 }).map((_, i) => i + 1);
 
   events = new Events.EventEmitter();
   tilesets = [];
@@ -19,17 +17,17 @@ export default class Map {
     this.scene = scene;
     this.player = player;
 
-    Map.TILESETS.forEach(async tileset => {
+    Object.entries(tilesets).forEach(([k, v]) => {
       scene.load.image(
-        `tileset-${tileset}`,
-        tilesets[tileset]
+        `tileset-${k}`,
+        v
       );
     });
 
-    Map.MAPS.forEach(i => {
+    Object.values(maps).forEach((v, i) => {
       scene.load.tilemapTiledJSON(
-        `map-${i}`,
-        maps[`map${i}`]
+        `map-${i + 1}`,
+        v
       );
     });
   }
