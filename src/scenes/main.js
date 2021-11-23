@@ -54,7 +54,9 @@ export default class MainScene extends Scene {
       .setBounds(0, 0, this.map.getWidth(), this.map.getHeight());
 
     this.map.events.once('goTo', mapId => {
-      this.goTo(mapId);
+      if (this.map.hasMap(mapId)) {
+        this.goTo(mapId);
+      }
     });
 
     this.cameras.main.fadeIn(500);

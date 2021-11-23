@@ -8,16 +8,16 @@ export default class Player extends GameObjects.Sprite {
   static HEIGHT = 64;
   static FRAMES = {
     IDLE: {
-      RIGHT: [0, 5],
-      TOP: [6, 11],
-      LEFT: [12, 17],
-      BOTTOM: [18, 23],
+      RIGHT: [56, 61],
+      TOP: [62, 67],
+      LEFT: [68, 73],
+      BOTTOM: [74, 79],
     },
     WALK: {
-      RIGHT: [24, 29],
-      TOP: [30, 35],
-      LEFT: [36, 41],
-      BOTTOM: [42, 47],
+      RIGHT: [112, 117],
+      TOP: [118, 123],
+      LEFT: [124, 129],
+      BOTTOM: [130, 135],
     },
   };
 

@@ -4,7 +4,6 @@ import * as tilesets from '../assets/images';
 import * as maps from '../assets/maps';
 
 export default class Map {
-
   events = new Events.EventEmitter();
   tilesets = [];
   layers = [];
@@ -177,5 +176,9 @@ export default class Map {
 
   getHeight () {
     return this.tilemap.heightInPixels;
+  }
+
+  hasMap (mapId) {
+    return !!maps[`map${mapId}`];
   }
 }
