@@ -92,6 +92,29 @@
                  "width":0,
                  "x":977.648742359457,
                  "y":665.570349022879
+                }, 
+                {
+                 "height":0,
+                 "id":43,
+                 "name":"",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"player",
+                         "type":"bool",
+                         "value":true
+                        }, 
+                        {
+                         "name":"start",
+                         "type":"string",
+                         "value":"3"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":1251.12540192926,
+                 "y":665.594855305466
                 }],
          "opacity":1,
          "properties":[
@@ -602,7 +625,7 @@
          "y":0
         }],
  "nextlayerid":8,
- "nextobjectid":43,
+ "nextobjectid":44,
  "orientation":"orthogonal",
  "renderorder":"left-down",
  "tiledversion":"1.7.2",
