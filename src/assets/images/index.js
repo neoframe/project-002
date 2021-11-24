@@ -6,3 +6,4 @@ export { default as livingRoom } from './tileset-living-room.png';
 export { default as kitchen } from './tileset-kitchen.png';
 export { default as walls } from './tileset-walls.png';
 export { default as bathroom } from './tileset-bathroom.png';
+export { default as bedroom } from './tileset-bedroom.png';
