@@ -1,7 +1,9 @@
 import { Events } from 'phaser';
 
+import PNJ from './pnj';
 import * as tilesets from '../assets/images';
 import * as maps from '../assets/maps';
+import * as pnjs from '../assets/pnjs';
 
 export default class Map {
   events = new Events.EventEmitter();
@@ -10,6 +12,7 @@ export default class Map {
   obstacles = [];
   actions = [];
   startPositions = [];
+  pnjs = [];
   playerDepth = 0;
 
   constructor (scene, player) {
@@ -17,22 +20,22 @@ export default class Map {
     this.player = player;
 
     Object.entries(tilesets).forEach(([k, v]) => {
-      scene.load.image(
-        `tileset-${k}`,
-        v
-      );
+      scene.load.image(`tileset-${k}`, v);
     });
 
     Object.values(maps).forEach((v, i) => {
-      scene.load.tilemapTiledJSON(
-        `map-${i + 1}`,
-        v
-      );
+      scene.load.tilemapTiledJSON(`map-${i + 1}`, v);
+    });
+
+    Object.entries(pnjs).forEach(([k, v]) => {
+      scene.load.spritesheet(`pnj-${k}`, v.charset.image, {
+        frameWidth: v.charset.frameWidth,
+        frameHeight: v.charset.frameHeight,
+      });
     });
   }
 
-  create () {
-  }
+  create () {}
 
   reset () {
     [...this.obstacles, ...this.actions]
@@ -43,6 +46,7 @@ export default class Map {
     this.obstacles = [];
     this.actions = [];
     this.startPositions = [];
+    this.pnjs = [];
   }
 
   init (mapId, options = {}) {
@@ -70,6 +74,7 @@ export default class Map {
         this.initCollisions(layer, obj, options);
         this.initActions(layer, obj, options);
         this.initPlayerProps(layer, obj, options);
+        this.initPnjs(layer, obj, options);
       });
     });
 
@@ -120,6 +125,19 @@ export default class Map {
       this.startPositions.push({ source: startPosition, x: obj.x, y: obj.y });
     } else if (startPosition === true) {
       this.startPositions.push({ source: 'default', x: obj.x, y: obj.y });
+    }
+  }
+
+  initPnjs (layer, obj) {
+    const depth = this.getProperty(layer.properties, 'depth');
+
+    if (this.getProperty(obj.properties, 'pnj')) {
+      const pnjId = this.getProperty(obj.properties, 'pnj');
+
+      const pnj = new PNJ(this.scene, pnjId, obj.x, obj.y);
+      pnj.create().setDepth(depth);
+
+      this.pnjs.push(pnj);
     }
   }
 
