@@ -64,5 +64,23 @@ export default class PNJ extends GameObjects.Sprite {
   }
 
   onStartDialog () {
+    const dialog = this.scene.rexUI.add
+      .dialog({
+        anchor: {
+          centerX: 'center',
+          centerY: 'bottom',
+        },
+        title: this.scene.add.text(0, 0, 'Martine'),
+        content: this.scene.add.text(0, 0, 'Hello'),
+      })
+      .layout()
+      .drawBounds(this.scene.add.graphics(), 0xff0000)
+      .popUp(300);
+    
+    dialog
+      .setDepth(Infinity)
+      .setScrollFactor(0);
+
+    console.log(dialog);
   }
 }

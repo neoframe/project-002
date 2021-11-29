@@ -1,4 +1,6 @@
 import { Game, Scale, AUTO } from 'phaser';
+import RexUI from 'phaser3-rex-plugins/templates/ui/ui-plugin';
+import RexAnchor from 'phaser3-rex-plugins/plugins/anchor-plugin';
 
 import { DEBUG } from './utils/settings';
 import MainScene from './scenes/main';
@@ -35,6 +37,9 @@ const _ = new Game({
   pixelArt: true,
   scene: [MainScene],
   plugins: {
-    scene: [],
+    scene: [
+      { key: 'rexUI', plugin: RexUI, mapping: 'rexUI' },
+      { key: 'rexAnchor', plugin: RexAnchor, mapping: 'rexAnchor' },
+    ],
   },
 });
