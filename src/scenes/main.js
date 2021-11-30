@@ -28,6 +28,8 @@ export default class MainScene extends Scene {
 
     this.player.canMove = false;
     this.map.init(1);
+
+    this.scene.launch('HUDScene');
     this.onMapReady();
   }
 
@@ -63,5 +65,9 @@ export default class MainScene extends Scene {
     this.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
       this.player.canMove = true;
     });
+  }
+
+  getHUD () {
+    return this.scene.get('HUDScene');
   }
 }

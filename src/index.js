@@ -4,6 +4,7 @@ import RexAnchor from 'phaser3-rex-plugins/plugins/anchor-plugin';
 
 import { DEBUG } from './utils/settings';
 import MainScene from './scenes/main';
+import HUDScene from './scenes/hud';
 
 import './index.css';
 
@@ -35,7 +36,7 @@ const _ = new Game({
     autoCenter: Scale.CENTER_BOTH,
   },
   pixelArt: true,
-  scene: [MainScene],
+  scene: [MainScene, HUDScene],
   plugins: {
     scene: [
       { key: 'rexUI', plugin: RexUI, mapping: 'rexUI' },

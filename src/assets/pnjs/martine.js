@@ -1,6 +1,7 @@
 import martine from '../images/charset-martine.png';
 
 export default {
+  name: 'Martine',
   charset: {
     image: martine,
     frameWidth: 32,
