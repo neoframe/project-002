@@ -13,7 +13,7 @@ export default class ExpandableBackgroundPlugin {
     this.scene = scene;
     this.sys = scene.sys;
 
-    if (!scene.sys.settings.isBooted) { 
+    if (!scene.sys.settings.isBooted) {
       scene.sys.events.once('boot', this.boot.bind(this));
     }
   }

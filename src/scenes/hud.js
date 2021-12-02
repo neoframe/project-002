@@ -15,9 +15,9 @@ export default class HUD extends Scene {
   }
 
   create () {
-    this.background = this.expandableBackgrounds
-      .add('dialog-background', 100, 100, 300, 200);
-    this.add.existing(this.background);
+    // this.background = this.expandableBackgrounds
+    //   .add('dialog-background', 100, 100, 300, 200);
+    // this.add.existing(this.background);
   }
 
   update () {}
@@ -39,8 +39,8 @@ export default class HUD extends Scene {
         expand: {
           title: false,
         },
-        background: this.add
-          .rectangle(0, 0, 100, 100, 0xFFFFFF),
+        background: this.expandableBackgrounds
+          .add('dialog-background', 100, 100, 300, 200),
         title: this.rexUI.add
           .label({
             text: this.add
