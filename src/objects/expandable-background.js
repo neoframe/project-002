@@ -8,8 +8,10 @@ export default class ExpandableBackground extends GameObjects.Zone {
 
   constructor (scene, texture, x, y, width, height) {
     super(scene, x, y, width, height);
+    this.baseWidth = width;
+    this.baseHeight = height;
 
-    this.previousRender = { x, y, width, height };
+    this.previousRender = { x, y, width, height, scaleX: 1, scaleY: 1 };
 
     this.texture = scene.textures.get(texture);
     this.frameDimensions = {
@@ -31,32 +33,36 @@ export default class ExpandableBackground extends GameObjects.Zone {
   }
 
   getTileX (side) {
+    const baseX = this.x - this.width * this.originX;
+
     switch (side) {
       case 'top':
       case 'center':
       case 'bottom':
-        return this.x + this.frameDimensions.width;
+        return baseX + this.frameDimensions.width;
       case 'top-right':
       case 'right':
       case 'bottom-right':
-        return this.x + this.width - this.frameDimensions.width;
+        return baseX + this.width - this.frameDimensions.width;
       default:
-        return this.x;
+        return baseX;
     }
   }
 
   getTileY (side) {
+    const baseY = this.y - this.height * this.originY;
+
     switch (side) {
       case 'left':
       case 'center':
       case 'right':
-        return this.y + this.frameDimensions.height;
+        return baseY + this.frameDimensions.height;
       case 'bottom-left':
       case 'bottom':
       case 'bottom-right':
-        return this.y + this.height - this.frameDimensions.height;
+        return baseY + this.height - this.frameDimensions.height;
       default:
-        return this.y;
+        return baseY;
     }
   }
 
@@ -95,6 +101,16 @@ export default class ExpandableBackground extends GameObjects.Zone {
     return ExpandableBackground.FRAMES.findIndex(f => f === side) || 0;
   }
 
+  getTotalWidth () {
+    return this.baseWidth * this.scaleX + (this.rexSizer?.padding?.left ?? 0) +
+      (this.rexSizer?.padding?.right ?? 0);
+  }
+
+  getTotalHeight () {
+    return this.baseHeight * this.scaleY + (this.rexSizer?.padding?.top ?? 0) +
+      (this.rexSizer?.padding?.bottom ?? 0);
+  }
+
   createCorner (side) {
     return this.scene.add
       .image(this.getTileX(side), this.getTileY(side), this.texture,
@@ -112,6 +128,17 @@ export default class ExpandableBackground extends GameObjects.Zone {
   }
 
   update (...args) {
+    super.update(...args);
+
+    if (
+      this.previousRender.scaleX !== this.scaleX ||
+      this.previousRender.scaleY !== this.scaleY
+    ) {
+      console.log(this);
+      this.width = this.getTotalWidth();
+      this.height = this.getTotalHeight();
+    }
+
     if (
       this.previousRender.x !== this.x ||
       this.previousRender.y !== this.y ||
@@ -128,7 +155,7 @@ export default class ExpandableBackground extends GameObjects.Zone {
 
     this.previousRender = {
       x: this.x, y: this.y, width: this.width, height: this.height,
+      scaleX: this.scaleX, scaleY: this.scaleY,
     };
-    super.update(...args);
   }
 }

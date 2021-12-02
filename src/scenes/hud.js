@@ -27,14 +27,14 @@ export default class HUD extends Scene {
       .dialog({
         anchor: {
           centerX: 'center',
-          bottom: 'bottom-20',
+          bottom: 'bottom-30',
         },
         spaces: {
-          title: 10,
-          left: 10,
-          right: 10,
-          bottom: 10,
-          top: 10,
+          title: 40,
+          left: 40,
+          right: 40,
+          bottom: 40,
+          top: 40,
         },
         expand: {
           title: false,
