@@ -1,14 +1,28 @@
 import { Scene } from 'phaser';
 
+import ExpandleBackground from '../objects/expandable-background';
+import dialogBackground from '../assets/images/dialog-background.png';
+
 export default class HUD extends Scene {
   constructor () {
     super({ key: 'HUDScene' });
   }
 
+  preload () {
+    this.load.spritesheet('dialog-background', dialogBackground, {
+      frameWidth: 20,
+      frameHeight: 20,
+    });
+  }
+
   create () {
+    this.background = new ExpandleBackground(
+      this, 'dialog-background', 100, 100, 300, 200);
+    this.add.existing(this.background);
   }
 
   update () {
+    this.background.x += 5;
   }
 
   showDialog (opts = {}) {
@@ -18,9 +32,25 @@ export default class HUD extends Scene {
           centerX: 'center',
           bottom: 'bottom-20',
         },
-        title: this.add.text(0, 0, opts.title, { color: '#fff' }),
-        content: this.add.text(0, 0, opts.content, { color: '#fff' }),
-        background: this.add.rectangle(0, 0, 100, 100, 0x000000),
+        spaces: {
+          title: 10,
+          left: 10,
+          right: 10,
+          bottom: 10,
+          top: 10,
+        },
+        expand: {
+          title: false,
+        },
+        background: this.add
+          .rectangle(0, 0, 100, 100, 0xFFFFFF),
+        title: this.rexUI.add
+          .label({
+            text: this.add
+              .text(0, 0, opts.title, { color: '#000', fontSize: '70px' }),
+          }),
+        content: this.add
+          .text(0, 0, opts.content, { color: '#000', fontSize: '70px' }),
       })
       .layout()
       .popUp(0);
