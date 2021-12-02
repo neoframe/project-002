@@ -1,13 +1,13 @@
 import { GameObjects } from 'phaser';
 
-export default class ExpandleBackground extends GameObjects.Rectangle {
+export default class ExpandableBackground extends GameObjects.Zone {
   static FRAMES = [
     'top-left', 'top', 'top-right', 'left', 'center', 'right', 'bottom-left',
     'bottom', 'bottom-right',
   ];
 
   constructor (scene, texture, x, y, width, height) {
-    super(scene, x, y, width, height, 0x000000);
+    super(scene, x, y, width, height);
 
     this.previousRender = { x, y, width, height };
 
@@ -92,7 +92,7 @@ export default class ExpandleBackground extends GameObjects.Rectangle {
   }
 
   getFrame (side) {
-    return ExpandleBackground.FRAMES.findIndex(f => f === side) || 0;
+    return ExpandableBackground.FRAMES.findIndex(f => f === side) || 0;
   }
 
   createCorner (side) {
@@ -112,17 +112,14 @@ export default class ExpandleBackground extends GameObjects.Rectangle {
   }
 
   update (...args) {
-    console.log('updating');
-
     if (
       this.previousRender.x !== this.x ||
       this.previousRender.y !== this.y ||
       this.previousRender.width !== this.width ||
       this.previousRender.height !== this.height
     ) {
-      console.log('updating tiles');
-      this.tiles.forEach(tile => {
-        const dims = this.getTileDimensions(tile.name);
+      this.tiles.forEach((tile, i) => {
+        const dims = this.getTileDimensions(ExpandableBackground.FRAMES[i]);
 
         tile.setPosition(dims.x, dims.y);
         tile.setSize(dims.width, dims.height);

@@ -1,6 +1,5 @@
 import { Scene } from 'phaser';
 
-import ExpandleBackground from '../objects/expandable-background';
 import dialogBackground from '../assets/images/dialog-background.png';
 
 export default class HUD extends Scene {
@@ -16,14 +15,12 @@ export default class HUD extends Scene {
   }
 
   create () {
-    this.background = new ExpandleBackground(
-      this, 'dialog-background', 100, 100, 300, 200);
+    this.background = this.expandableBackgrounds
+      .add('dialog-background', 100, 100, 300, 200);
     this.add.existing(this.background);
   }
 
-  update () {
-    this.background.x += 5;
-  }
+  update () {}
 
   showDialog (opts = {}) {
     this.dialog = this.rexUI.add
