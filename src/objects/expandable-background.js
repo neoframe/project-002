@@ -134,7 +134,6 @@ export default class ExpandableBackground extends GameObjects.Zone {
       this.previousRender.scaleX !== this.scaleX ||
       this.previousRender.scaleY !== this.scaleY
     ) {
-      console.log(this);
       this.width = this.getTotalWidth();
       this.height = this.getTotalHeight();
     }

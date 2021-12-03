@@ -1,6 +1,7 @@
 import { Game, Scale, AUTO } from 'phaser';
 import RexUI from 'phaser3-rex-plugins/templates/ui/ui-plugin';
 import RexAnchor from 'phaser3-rex-plugins/plugins/anchor-plugin';
+import RexTextTyping from 'phaser3-rex-plugins/plugins/texttyping-plugin.js';
 
 import ExpandableBackgroundPlugin from './plugins/expandable-background';
 import { DEBUG } from './utils/settings';
@@ -42,6 +43,7 @@ const _ = new Game({
     scene: [
       { key: 'rexUI', plugin: RexUI, mapping: 'rexUI' },
       { key: 'rexAnchor', plugin: RexAnchor, mapping: 'rexAnchor' },
+      { key: 'rexTextTyping', plugin: RexTextTyping, mapping: 'rexTextTyping' },
       { key: 'expandableBackgrounds', plugin: ExpandableBackgroundPlugin,
         mapping: 'expandableBackgrounds' },
     ],

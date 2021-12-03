@@ -1,6 +1,7 @@
-import { Scene } from 'phaser';
+import { GameObjects, Scene } from 'phaser';
 
 import dialogBackground from '../assets/images/dialog-background.png';
+import { FONT } from '../utils/settings';
 
 export default class HUD extends Scene {
   constructor () {
@@ -14,43 +15,68 @@ export default class HUD extends Scene {
     });
   }
 
-  create () {
-    // this.background = this.expandableBackgrounds
-    //   .add('dialog-background', 100, 100, 300, 200);
-    // this.add.existing(this.background);
-  }
+  create () {}
 
   update () {}
 
   showDialog (opts = {}) {
+    const content = new GameObjects
+      .Text(this, 0, 0, opts.content, { ...FONT, fontSize: 32 });
+    const typer = this.rexTextTyping.add(content);
+
     this.dialog = this.rexUI.add
       .dialog({
         anchor: {
           centerX: 'center',
           bottom: 'bottom-30',
         },
-        spaces: {
-          title: 40,
+        width: 800,
+        space: {
+          title: 20,
           left: 40,
           right: 40,
           bottom: 40,
-          top: 40,
+          top: -20,
+          toolbarItem: -30,
         },
         expand: {
           title: false,
+          content: false,
+        },
+        align: {
+          title: 'left',
+          content: 'left',
         },
         background: this.expandableBackgrounds
           .add('dialog-background', 100, 100, 300, 200),
         title: this.rexUI.add
           .label({
+            background: this.expandableBackgrounds
+              .add('dialog-background', 100, 100, 300, 200),
             text: this.add
-              .text(0, 0, opts.title, { color: '#000', fontSize: '70px' }),
+              .text(0, 0, opts.title, FONT),
+            space: {
+              top: 10,
+              bottom: 10,
+              left: 10,
+              right: 10,
+            },
           }),
-        content: this.add
-          .text(0, 0, opts.content, { color: '#000', fontSize: '70px' }),
+        toolbar: [
+          this.rexUI.add.label({
+            text: this.add.text(0, 0, 'x'),
+          }),
+        ],
+        content,
+        sizerEvents: true,
       })
       .layout()
-      .popUp(0);
+      .on('popup.complete', () => {
+        typer.start(opts.content, 20);
+      })
+      .popUp(100);
+
+    this.add.existing(content);
   }
 
   hideDialog () {
