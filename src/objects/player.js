@@ -74,6 +74,10 @@ export default class Player extends GameObjects.Sprite {
   }
 
   move () {
+    if (this.scene.scene.get('HUDScene').isInputLocked()) {
+      return;
+    }
+
     if (!this.canMove) {
       this.anims.stop();
       this.scene.matter.setVelocity(this.body, 0, 0);

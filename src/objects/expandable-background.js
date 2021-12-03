@@ -102,13 +102,11 @@ export default class ExpandableBackground extends GameObjects.Zone {
   }
 
   getTotalWidth () {
-    return this.baseWidth * this.scaleX + (this.rexSizer?.padding?.left ?? 0) +
-      (this.rexSizer?.padding?.right ?? 0);
+    return this.baseWidth * this.scaleX;
   }
 
   getTotalHeight () {
-    return this.baseHeight * this.scaleY + (this.rexSizer?.padding?.top ?? 0) +
-      (this.rexSizer?.padding?.bottom ?? 0);
+    return this.baseHeight * this.scaleY;
   }
 
   createCorner (side) {
@@ -127,9 +125,7 @@ export default class ExpandableBackground extends GameObjects.Zone {
       .setOrigin(0);
   }
 
-  update (...args) {
-    super.update(...args);
-
+  preUpdate () {
     if (
       this.previousRender.scaleX !== this.scaleX ||
       this.previousRender.scaleY !== this.scaleY
@@ -142,19 +138,26 @@ export default class ExpandableBackground extends GameObjects.Zone {
       this.previousRender.x !== this.x ||
       this.previousRender.y !== this.y ||
       this.previousRender.width !== this.width ||
-      this.previousRender.height !== this.height
+      this.previousRender.height !== this.height ||
+      this.previousRender.alpha !== this.alpha
     ) {
       this.tiles.forEach((tile, i) => {
         const dims = this.getTileDimensions(ExpandableBackground.FRAMES[i]);
 
         tile.setPosition(dims.x, dims.y);
         tile.setSize(dims.width, dims.height);
+        tile.setAlpha(isNaN(this.alpha) ? 1 : this.alpha);
       });
     }
 
     this.previousRender = {
       x: this.x, y: this.y, width: this.width, height: this.height,
-      scaleX: this.scaleX, scaleY: this.scaleY,
+      scaleX: this.scaleX, scaleY: this.scaleY, alpha: this.alpha,
     };
+  }
+
+  destroy (...args) {
+    this.tiles.forEach(tile => tile.destroy());
+    super.destroy(...args);
   }
 }

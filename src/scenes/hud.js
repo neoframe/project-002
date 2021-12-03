@@ -1,27 +1,44 @@
 import { GameObjects, Scene } from 'phaser';
 
-import dialogBackground from '../assets/images/dialog-background.png';
 import { FONT } from '../utils/settings';
+import dialogBackground from '../assets/images/dialog-background.png';
+import ui from '../assets/images/ui.png';
 
 export default class HUD extends Scene {
+  inputLocked = false;
+
   constructor () {
     super({ key: 'HUDScene' });
   }
 
   preload () {
+    this.load.spritesheet('ui', ui, {
+      frameWidth: 32,
+      frameHeight: 32,
+    });
     this.load.spritesheet('dialog-background', dialogBackground, {
       frameWidth: 20,
       frameHeight: 20,
     });
   }
 
-  create () {}
+  create () {
+    this.input.keyboard.on('keydown-ESC', () => {
+      this.hideDialog();
+    });
+  }
 
   update () {}
 
   showDialog (opts = {}) {
+    if (this.dialog) {
+      return;
+    }
+
+    this.inputLocked = true;
+
     const content = new GameObjects
-      .Text(this, 0, 0, opts.content, { ...FONT, fontSize: 32 });
+      .Text(this, 0, 0, opts.content, FONT);
     const typer = this.rexTextTyping.add(content);
 
     this.dialog = this.rexUI.add
@@ -33,11 +50,12 @@ export default class HUD extends Scene {
         width: 800,
         space: {
           title: 20,
-          left: 40,
-          right: 40,
+          titleLeft: 40,
+          titleRight: 40,
+          contentLeft: 20,
+          contentRight: 20,
           bottom: 40,
           top: -20,
-          toolbarItem: -30,
         },
         expand: {
           title: false,
@@ -46,6 +64,7 @@ export default class HUD extends Scene {
         align: {
           title: 'left',
           content: 'left',
+          toolbar: 'right',
         },
         background: this.expandableBackgrounds
           .add('dialog-background', 100, 100, 300, 200),
@@ -64,22 +83,43 @@ export default class HUD extends Scene {
           }),
         toolbar: [
           this.rexUI.add.label({
-            text: this.add.text(0, 0, 'x'),
+            name: 'close',
+            text: this.add.image(0, 0, 'ui', 0),
+            space: {
+              top: 30,
+              right: 10,
+            },
           }),
         ],
         content,
         sizerEvents: true,
       })
       .layout()
-      .on('popup.complete', () => {
-        typer.start(opts.content, 20);
+      .on('button.click', button => {
+        switch (button.name) {
+          case 'close':
+            typer.destroy();
+            this.hideDialog();
+        }
       })
-      .popUp(100);
-
-    this.add.existing(content);
+      .on('fadein.complete', () => {
+        this.add.existing(content);
+        typer.start(opts.content, 50);
+      })
+      .fadeIn(200);
   }
 
   hideDialog () {
-    this.dialog?.destroy();
+    if (!this.dialog) {
+      return;
+    }
+
+    this.dialog?.fadeOutDestroy(100);
+    this.dialog = null;
+    this.inputLocked = false;
+  }
+
+  isInputLocked () {
+    return this.inputLocked;
   }
 }

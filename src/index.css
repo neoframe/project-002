@@ -6,6 +6,14 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'Minimal Pixel';
+  src: url('./assets/fonts/minimalpixel.woff2') format('woff2'),
+       url('./assets/fonts/minimalpixel.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
