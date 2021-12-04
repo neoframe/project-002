@@ -1,12 +1,12 @@
-import { GameObjects, Scene } from 'phaser';
+import { Scene } from 'phaser';
 
-import { FONT } from '../utils/settings';
-import dialogBackground from '../assets/images/dialog-background.png';
+import { DIALOGS } from '../utils/settings';
+import dialogBackground from '../assets/images/dialog-background-dark.png';
 import ui from '../assets/images/ui.png';
+import minimalPixel from '../assets/fonts/minimalpixel.png';
+import minimalPixelXml from '../assets/fonts/minimalpixel.xml';
 
 export default class HUD extends Scene {
-  inputLocked = false;
-
   constructor () {
     super({ key: 'HUDScene' });
   }
@@ -16,64 +16,47 @@ export default class HUD extends Scene {
       frameWidth: 32,
       frameHeight: 32,
     });
-    this.load.spritesheet('dialog-background', dialogBackground, {
+    this.load.spritesheet('dialog-background-dark', dialogBackground, {
       frameWidth: 20,
       frameHeight: 20,
     });
+    this.load.bitmapFont('minimal-pixel', minimalPixel, minimalPixelXml);
   }
 
   create () {
-    this.input.keyboard.on('keydown-ESC', () => {
-      this.hideDialog();
-    });
+    this.input.keyboard.on('keydown-ESC', this.hideDialog.bind(this));
+    this.game.events.on('open-dialog', this.onOpenDialogModal.bind(this));
   }
 
   update () {}
 
-  showDialog (opts = {}) {
+  getDialog (dialogs, id) {
+    id = id ? id : 'start';
+
+    return dialogs.find(d => d.id === id) ||
+      dialogs.find(d => d.id === 'default');
+  }
+
+  onOpenDialogModal (opts = {}) {
     if (this.dialog) {
       return;
     }
 
-    this.inputLocked = true;
+    this.game.events.emit('lock-ui');
 
-    const content = new GameObjects
-      .Text(this, 0, 0, opts.content, FONT);
-    const typer = this.rexTextTyping.add(content);
+    const dialog = this.getDialog(opts.dialogs, opts.content);
 
-    this.dialog = this.rexUI.add
+    this.dialogModal = this.rexUI.add
       .dialog({
-        anchor: {
-          centerX: 'center',
-          bottom: 'bottom-30',
-        },
-        width: 800,
-        space: {
-          title: 20,
-          titleLeft: 40,
-          titleRight: 40,
-          contentLeft: 20,
-          contentRight: 20,
-          bottom: 40,
-          top: -20,
-        },
-        expand: {
-          title: false,
-          content: false,
-        },
-        align: {
-          title: 'left',
-          content: 'left',
-          toolbar: 'right',
-        },
+        ...DIALOGS,
         background: this.expandableBackgrounds
-          .add('dialog-background', 100, 100, 300, 200),
+          .add('dialog-background-dark', 100, 100, 300, 200),
         title: this.rexUI.add
           .label({
             background: this.expandableBackgrounds
-              .add('dialog-background', 100, 100, 300, 200),
+              .add('dialog-background-dark', 100, 100, 300, 200),
             text: this.add
-              .text(0, 0, opts.title, FONT),
+              .bitmapText(0, 0, 'minimal-pixel', opts.title, 24),
             space: {
               top: 10,
               bottom: 10,
@@ -82,44 +65,59 @@ export default class HUD extends Scene {
             },
           }),
         toolbar: [
-          this.rexUI.add.label({
-            name: 'close',
-            text: this.add.image(0, 0, 'ui', 0),
-            space: {
-              top: 30,
-              right: 10,
-            },
-          }),
+          this.createDialogCloseButton(),
         ],
-        content,
+        actions: dialog.options?.map(this.createAction.bind(this)) || [],
+        content: this.add.bitmapText(0, 0, 'minimal-pixel', dialog.text, 34),
         sizerEvents: true,
       })
       .layout()
-      .on('button.click', button => {
-        switch (button.name) {
-          case 'close':
-            typer.destroy();
-            this.hideDialog();
-        }
-      })
-      .on('fadein.complete', () => {
-        this.add.existing(content);
-        typer.start(opts.content, 50);
-      })
-      .fadeIn(200);
+      .on('button.click', this.onDialogButtonClick.bind(this, opts))
+      .fadeIn(0);
   }
 
   hideDialog () {
-    if (!this.dialog) {
+    if (!this.dialogModal) {
       return;
     }
 
-    this.dialog?.fadeOutDestroy(100);
-    this.dialog = null;
-    this.inputLocked = false;
+    this.dialogModal?.fadeOutDestroy(0);
+    this.dialogModal = null;
+    this.game.events.emit('unlock-ui');
   }
 
-  isInputLocked () {
-    return this.inputLocked;
+  createAction (opts = {}) {
+    return this.rexUI.add.label({
+      name: opts.end ? 'close' : 'dialog',
+      text: this.add.bitmapText(0, 0, 'minimal-pixel', opts.text, 24),
+    }).setData(opts).setInteractive({ useHandCursor: true });
+  }
+
+  createDialogCloseButton () {
+    return this.rexUI.add.label({
+      name: 'close',
+      text: this.add.bitmapText(0, 0, 'minimal-pixel', 'x', 40),
+      space: {
+        top: 30,
+        right: 10,
+      },
+    }).setInteractive({ useHandCursor: true });
+  }
+
+  onDialogButtonClick (opts, button) {
+    switch (button.name) {
+      case 'close':
+        this.hideDialog();
+        break;
+      case 'dialog':
+        this.hideDialog();
+
+        this.onOpenDialogModal({
+          ...opts,
+          content: button.getData('to'),
+        });
+
+        break;
+    }
   }
 }

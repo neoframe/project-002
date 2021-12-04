@@ -18,7 +18,7 @@ export default {
     },
   },
   dialogs: [{
-    id: 'default',
+    id: 'start',
     text: 'Hey how are you?',
     options: [{
       text: 'Fine',
@@ -30,6 +30,10 @@ export default {
   }, {
     id: 'fine',
     text: 'Alright cool! I\'m fine too!',
+    options: [{
+      text: 'Ok thanks',
+      end: true,
+    }],
   }, {
     id: 'not-so-good',
     text: 'Oh no! What happened?',
@@ -39,6 +43,13 @@ export default {
     }, {
       text: 'I\'m fine actually',
       to: 'fine',
+    }],
+  }, {
+    id: 'default',
+    text: 'I think I\'m gonna go home!',
+    options: [{
+      text: 'Have fun!',
+      end: true,
     }],
   }],
 };

@@ -3,6 +3,8 @@ import { Cameras, Scene } from 'phaser';
 import { ZOOM } from '../utils/settings';
 import Player from '../objects/player';
 import Map from '../objects/map';
+import minimalPixel from '../assets/fonts/minimalpixel.png';
+import minimalPixelXML from '../assets/fonts/minimalpixel.xml';
 
 export default class MainScene extends Scene {
   constructor () {
@@ -12,6 +14,8 @@ export default class MainScene extends Scene {
   preload () {
     this.player = new Player(this);
     this.map = new Map(this, this.player);
+
+    this.load.bitmapFont('minimal-pixel', minimalPixel, minimalPixelXML);
   }
 
   create () {

@@ -134,7 +134,7 @@ export default class Map {
     if (this.getProperty(obj.properties, 'pnj')) {
       const pnjId = this.getProperty(obj.properties, 'pnj');
 
-      const pnj = new PNJ(this.scene, pnjId, obj.x, obj.y);
+      const pnj = new PNJ(this.scene, this.player, pnjId, obj.x, obj.y);
       pnj.create().setDepth(depth);
 
       this.pnjs.push(pnj);
