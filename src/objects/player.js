@@ -22,7 +22,12 @@ export default class Player extends GameObjects.Sprite {
   };
 
   direction = 'bottom';
-  canMove = true;
+  #canMove = true;
+  #money = 0;
+  #life = 100;
+  #maxLife = 100;
+  #mana = 100;
+  #maxMana = 100;
 
   constructor (scene, ...args) {
     super(scene, ...args);
@@ -77,7 +82,7 @@ export default class Player extends GameObjects.Sprite {
   }
 
   move () {
-    if (!this.canMove) {
+    if (!this.#canMove) {
       this.scene.matter.setVelocity(this.body, 0, 0);
 
       return;
@@ -133,10 +138,30 @@ export default class Player extends GameObjects.Sprite {
   }
 
   onUILock () {
-    this.canMove = false;
+    this.#canMove = false;
   }
 
   onUIUnlock () {
-    this.canMove = true;
+    this.#canMove = true;
+  }
+
+  getMoney () {
+    return this.#money;
+  }
+
+  getLife () {
+    return this.#life;
+  }
+
+  getMaxLife () {
+    return this.#maxLife;
+  }
+
+  getMana () {
+    return this.#mana;
+  }
+
+  getMaxMana () {
+    return this.#maxMana;
   }
 }

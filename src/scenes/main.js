@@ -74,4 +74,8 @@ export default class MainScene extends Scene {
   getHUD () {
     return this.scene.get('HUDScene');
   }
+
+  getPlayer () {
+    return this.player;
+  }
 }

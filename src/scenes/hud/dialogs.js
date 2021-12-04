@@ -1,34 +1,26 @@
-import { Scene } from 'phaser';
+import { DIALOGS } from '../../utils/settings';
+import dialogBackground from '../../assets/images/dialog-background-dark.png';
 
-import { DIALOGS } from '../utils/settings';
-import dialogBackground from '../assets/images/dialog-background-dark.png';
-import ui from '../assets/images/ui.png';
-import minimalPixel from '../assets/fonts/minimalpixel.png';
-import minimalPixelXml from '../assets/fonts/minimalpixel.xml';
+export default class DialogsUI {
+  scene = null;
+  dialog = null;
+  dialogModal = null;
 
-export default class HUD extends Scene {
-  constructor () {
-    super({ key: 'HUDScene' });
+  constructor (scene) {
+    this.scene = scene;
   }
 
   preload () {
-    this.load.spritesheet('ui', ui, {
-      frameWidth: 32,
-      frameHeight: 32,
-    });
-    this.load.spritesheet('dialog-background-dark', dialogBackground, {
+    this.scene.load.spritesheet('dialog-background-dark', dialogBackground, {
       frameWidth: 20,
       frameHeight: 20,
     });
-    this.load.bitmapFont('minimal-pixel', minimalPixel, minimalPixelXml);
   }
 
   create () {
-    this.input.keyboard.on('keydown-ESC', this.hideDialog.bind(this));
-    this.game.events.on('open-dialog', this.onOpenDialogModal.bind(this));
+    this.scene.game.events.on('open-dialog', this.onOpenDialogModal.bind(this));
+    this.scene.input.keyboard.on('keydown-ESC', this.hideDialog.bind(this));
   }
-
-  update () {}
 
   getDialog (dialogs, id) {
     id = id ? id : 'start';
@@ -38,24 +30,24 @@ export default class HUD extends Scene {
   }
 
   onOpenDialogModal (opts = {}) {
-    if (this.dialog) {
+    if (this.dialogModal) {
       return;
     }
 
-    this.game.events.emit('lock-ui');
+    this.scene.game.events.emit('lock-ui');
 
     const dialog = this.getDialog(opts.dialogs, opts.content);
 
-    this.dialogModal = this.rexUI.add
+    this.dialogModal = this.scene.rexUI.add
       .dialog({
         ...DIALOGS,
-        background: this.expandableBackgrounds
+        background: this.scene.expandableBackgrounds
           .add('dialog-background-dark', 100, 100, 300, 200),
-        title: this.rexUI.add
+        title: this.scene.rexUI.add
           .label({
-            background: this.expandableBackgrounds
+            background: this.scene.expandableBackgrounds
               .add('dialog-background-dark', 100, 100, 300, 200),
-            text: this.add
+            text: this.scene.add
               .bitmapText(0, 0, 'minimal-pixel', opts.title, 24),
             space: {
               top: 10,
@@ -68,7 +60,8 @@ export default class HUD extends Scene {
           this.createDialogCloseButton(),
         ],
         actions: dialog.options?.map(this.createAction.bind(this)) || [],
-        content: this.add.bitmapText(0, 0, 'minimal-pixel', dialog.text, 34),
+        content: this.scene.add
+          .bitmapText(0, 0, 'minimal-pixel', dialog.text, 34),
         sizerEvents: true,
       })
       .layout()
@@ -83,20 +76,20 @@ export default class HUD extends Scene {
 
     this.dialogModal?.fadeOutDestroy(0);
     this.dialogModal = null;
-    this.game.events.emit('unlock-ui');
+    this.scene.game.events.emit('unlock-ui');
   }
 
   createAction (opts = {}) {
-    return this.rexUI.add.label({
+    return this.scene.rexUI.add.label({
       name: opts.end ? 'close' : 'dialog',
-      text: this.add.bitmapText(0, 0, 'minimal-pixel', opts.text, 24),
+      text: this.scene.add.bitmapText(0, 0, 'minimal-pixel', opts.text, 24),
     }).setData(opts).setInteractive({ useHandCursor: true });
   }
 
   createDialogCloseButton () {
-    return this.rexUI.add.label({
+    return this.scene.rexUI.add.label({
       name: 'close',
-      text: this.add.bitmapText(0, 0, 'minimal-pixel', 'x', 40),
+      text: this.scene.add.bitmapText(0, 0, 'minimal-pixel', 'x', 40),
       space: {
         top: 30,
         right: 10,
@@ -119,5 +112,14 @@ export default class HUD extends Scene {
 
         break;
     }
+  }
+
+  destroy () {
+    this.scene.game.events
+      .off('open-dialog', this.onOpenDialogModal.bind(this));
+    this.scene.input.keyboard
+      .off('keydown-ESC', this.hideDialog.bind(this));
+
+    this.dialogModal?.destroy();
   }
 }

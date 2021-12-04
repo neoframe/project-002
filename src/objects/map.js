@@ -38,8 +38,10 @@ export default class Map {
   create () {}
 
   reset () {
-    [...this.obstacles, ...this.actions]
+    [...this.obstacles, ...this.actions, ...this.pnjs]
       .forEach(o => o && this.scene.matter.world.remove(o));
+    [...this.pnjs]
+      .forEach(o => o && o.destroy());
     this.tilemap?.destroy();
     this.tilesets = [];
     this.layers = [];
