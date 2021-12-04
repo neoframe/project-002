@@ -85,24 +85,34 @@ export default class Player extends GameObjects.Sprite {
       return;
     }
 
-    if (this.scene.cursors.left.isDown || this.scene.cursors.q.isDown) {
-      this.scene.matter.setVelocityX(this.body, -PLAYER_SPEED);
-      this.direction = 'left';
-    } else if (this.scene.cursors.right.isDown || this.scene.cursors.d.isDown) {
-      this.scene.matter.setVelocityX(this.body, PLAYER_SPEED);
-      this.direction = 'right';
-    } else {
-      this.scene.matter.setVelocityX(this.body, 0);
+    if (this.body.velocity.y === 0) {
+      if (this.scene.cursors.left.isDown || this.scene.cursors.q.isDown) {
+        this.scene.matter.setVelocityX(this.body, -PLAYER_SPEED);
+        this.direction = 'left';
+      } else if (
+        this.scene.cursors.right.isDown ||
+        this.scene.cursors.d.isDown
+      ) {
+        this.scene.matter.setVelocityX(this.body, PLAYER_SPEED);
+        this.direction = 'right';
+      } else {
+        this.scene.matter.setVelocityX(this.body, 0);
+      }
     }
 
-    if (this.scene.cursors.up.isDown || this.scene.cursors.z.isDown) {
-      this.scene.matter.setVelocityY(this.body, -PLAYER_SPEED);
-      this.direction = 'top';
-    } else if (this.scene.cursors.down.isDown || this.scene.cursors.s.isDown) {
-      this.scene.matter.setVelocityY(this.body, PLAYER_SPEED);
-      this.direction = 'bottom';
-    } else {
-      this.scene.matter.setVelocityY(this.body, 0);
+    if (this.body.velocity.x === 0) {
+      if (this.scene.cursors.up.isDown || this.scene.cursors.z.isDown) {
+        this.scene.matter.setVelocityY(this.body, -PLAYER_SPEED);
+        this.direction = 'top';
+      } else if (
+        this.scene.cursors.down.isDown ||
+        this.scene.cursors.s.isDown
+      ) {
+        this.scene.matter.setVelocityY(this.body, PLAYER_SPEED);
+        this.direction = 'bottom';
+      } else {
+        this.scene.matter.setVelocityY(this.body, 0);
+      }
     }
   }
 

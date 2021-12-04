@@ -6,6 +6,8 @@ export default {
     image: martine,
     frameWidth: 32,
     frameHeight: 64,
+    bodyWidth: 31,
+    bodyHeight: 38,
     frames: {
       idle: {
         right: [56, 61],

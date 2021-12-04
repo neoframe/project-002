@@ -2,6 +2,9 @@ import { Game, Scale, AUTO } from 'phaser';
 import RexUI from 'phaser3-rex-plugins/templates/ui/ui-plugin';
 import RexAnchor from 'phaser3-rex-plugins/plugins/anchor-plugin';
 import RexTextTyping from 'phaser3-rex-plugins/plugins/texttyping-plugin.js';
+import OutlinePipelinePlugin
+  from 'phaser3-rex-plugins/plugins/outlinepipeline-plugin.js';
+import OutlinePostFx from 'phaser3-rex-plugins/plugins/outlinepipeline.js';
 
 import ExpandableBackgroundPlugin from './plugins/expandable-background';
 import { DEBUG } from './utils/settings';
@@ -37,6 +40,8 @@ const _ = new Game({
     mode: Scale.RESIZE,
     autoCenter: Scale.CENTER_BOTH,
   },
+  antialias: false,
+  antialiasGL: false,
   pixelArt: true,
   scene: [MainScene, HUDScene],
   plugins: {
@@ -44,8 +49,11 @@ const _ = new Game({
       { key: 'rexUI', plugin: RexUI, mapping: 'rexUI' },
       { key: 'rexAnchor', plugin: RexAnchor, mapping: 'rexAnchor' },
       { key: 'rexTextTyping', plugin: RexTextTyping, mapping: 'rexTextTyping' },
+      { key: 'rexOutlinePipeline', plugin: OutlinePipelinePlugin,
+        mapping: 'rexOutlinePipeline', start: true },
       { key: 'expandableBackgrounds', plugin: ExpandableBackgroundPlugin,
         mapping: 'expandableBackgrounds' },
     ],
   },
+  pipeline: [OutlinePostFx],
 });

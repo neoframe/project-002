@@ -1,11 +1,12 @@
-import { GameObjects, Events } from 'phaser';
+import { GameObjects } from 'phaser';
+import OutlinePostFx from 'phaser3-rex-plugins/plugins/outlinepipeline.js';
 
 import * as pnjs from '../assets/pnjs';
+import { FONT } from '../utils/settings';
 
 export default class PNJ extends GameObjects.Sprite {
   name = null;
   settings = null;
-  events = new Events.EventEmitter();
 
   constructor (scene, name, ...args) {
     super(scene, ...args);
@@ -14,23 +15,25 @@ export default class PNJ extends GameObjects.Sprite {
   }
 
   create () {
+    this.setPostPipeline(OutlinePostFx);
+    this.setInteractive({
+      useHandCursor: true,
+      pixelPerfect: true,
+    });
+
     this.setTexture(`pnj-${this.name}`,
       this.getCharsetFrame('idle', 'bottom')[0]);
 
     this.scene.matter.add.gameObject(this, {
       ignoreGravity: true,
       isStatic: true,
-      shape: { type: 'rectangle', width: 31, height: 38 },
+      shape: {
+        type: 'rectangle',
+        width: this.settings.charset.bodyWidth,
+        height: this.settings.charset.bodyHeight,
+      },
       render: {
         sprite: { xOffset: 0, yOffset: 13 / this.settings.charset.frameHeight },
-      },
-      onCollideCallback: () => {
-        this.scene.input.keyboard.on('keydown-SPACE',
-          this.onStartDialog.bind(this));
-      },
-      onCollideEndCallback: () => {
-        this.scene.input.keyboard.off('keydown-SPACE',
-          this.onStartDialog.bind(this));
       },
     });
     this.scene.matter.body.setInertia(this.body, Infinity);
@@ -55,6 +58,59 @@ export default class PNJ extends GameObjects.Sprite {
     });
 
     this.anims.play(`pnj-${this.name}-idle-bottom`, true);
+
+    // Add label
+    this.label = this.scene.rexUI.add.sizer({
+      x: this.x,
+      y: this.y - this.settings.charset.bodyHeight,
+    }).add(this.scene.rexUI.add.label({
+      background: this.scene.rexUI.add
+        .roundRectangle(0, 0, 2, 2, 5, 0x000000)
+        .setAlpha(0.5)
+        .setDepth(100),
+      text: this.scene.add.text(0, 0, this.settings.name,
+        { ...FONT, fontSize: 8, color: '#ffffff' })
+        .setDepth(101),
+      space: {
+        left: 10,
+        right: 10,
+        top: 5,
+        bottom: 5,
+      },
+    })).layout().setAlpha(0);
+
+    this.on('pointerover', () => {
+      this.scene.rexOutlinePipeline.add(this, {
+        quality: 0.05,
+        thickness: 4,
+      });
+      this.scene.tweens.add({
+        targets: this.label,
+        alpha: 1,
+        y: this.y - this.settings.charset.bodyHeight - 10,
+        duration: 100,
+        ease: 'Power1',
+      });
+    });
+
+    this.on('pointerout', () => {
+      this.scene.rexOutlinePipeline.remove(this);
+      this.scene.tweens.add({
+        targets: this.label,
+        alpha: 0,
+        y: this.y - this.settings.charset.bodyHeight,
+        duration: 100,
+        ease: 'Power1',
+      });
+    });
+
+    this.on('pointerup', () => {
+      if (this.scene.scene.get('HUDScene').isInputLocked()) {
+        return;
+      }
+
+      this.onStartDialog();
+    });
 
     return this;
   }
