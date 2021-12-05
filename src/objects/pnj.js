@@ -2,7 +2,6 @@ import { GameObjects } from 'phaser';
 import OutlinePostFx from 'phaser3-rex-plugins/plugins/outlinepipeline.js';
 
 import * as pnjs from '../assets/pnjs';
-import { FONT } from '../utils/settings';
 
 export default class PNJ extends GameObjects.Sprite {
   name = null;

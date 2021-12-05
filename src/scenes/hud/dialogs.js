@@ -91,7 +91,7 @@ export default class DialogsUI {
       name: button.end
         ? 'close'
         : button.action ? 'action' : 'dialog',
-      text: this.scene.add.bitmapText(0, 0, 'minimal-pixel', button.text, 24),
+      text: this.scene.add.bitmapText(0, 0, 'minimal-pixel', button.text, 34),
     }).setData(button).setInteractive({ useHandCursor: true });
   }
 
