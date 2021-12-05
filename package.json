@@ -5,12 +5,17 @@
   "repository": "https://github.com/neoframe/project-002.git",
   "author": "dackmin <ugo@poool.fr>",
   "scripts": {
-    "serve": "webpack serve --config webpack.config.js"
+    "serve": "node ./script/serve.js",
+    "serve:client": "webpack serve --config ./webpack.config.js",
+    "serve:server": "nodemon --watch ./server --exec node ./server/index.js"
   },
   "dependencies": {
+    "@poool/junipero-utils": "2.0.0-alpha.0",
     "core-js": "3.19.1",
     "phaser": "3.55.2",
-    "phaser3-rex-plugins": "1.1.63"
+    "phaser3-rex-plugins": "1.1.63",
+    "uuid": "8.3.2",
+    "ws": "8.3.0"
   },
   "devDependencies": {
     "@babel/core": "7.15.8",
@@ -28,6 +33,8 @@
     "eslint-plugin-node": "11.1.0",
     "eslint-plugin-promise": "5.1.1",
     "html-webpack-plugin": "5.4.0",
+    "nodemon": "2.0.15",
+    "postcss": "8.4.4",
     "postcss-loader": "6.2.0",
     "style-loader": "3.3.1",
     "webpack": "5.59.1",

@@ -34,7 +34,7 @@ module.exports = {
         },
       ],
     }, {
-      test: /\.(jpg|jpeg|png|gif|xml|ttf|eot|woff|woff2)$/,
+      test: /\.(jpg|jpeg|png|gif|xml|ttf|eot|woff|woff2|html)$/,
       type: 'asset/resource',
     }, {
       test: /\.(glsl)$/,

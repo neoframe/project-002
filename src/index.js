@@ -8,6 +8,7 @@ import ExpandableBackgroundPlugin from './plugins/expandable-background';
 import { DEBUG } from './utils/settings';
 import MainScene from './scenes/main';
 import HUDScene from './scenes/hud';
+import WebSocketPlugin from './plugins/websocket';
 
 import './index.css';
 
@@ -49,6 +50,7 @@ const _ = new Game({
         mapping: 'rexOutlinePipeline', start: true },
       { key: 'expandableBackgrounds', plugin: ExpandableBackgroundPlugin,
         mapping: 'expandableBackgrounds' },
+      { key: 'webSocketPlugin', plugin: WebSocketPlugin, mapping: 'webSocket' },
     ],
   },
   pipeline: [OutlinePostFx],

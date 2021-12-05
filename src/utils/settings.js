@@ -1,5 +1,6 @@
 export const DEBUG = false;
 export const ZOOM = 2;
+export const SERVER_URL = 'ws://localhost:21002';
 
 export const FONT = {
   fontFamily: 'Minimal Pixel',

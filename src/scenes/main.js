@@ -1,6 +1,6 @@
 import { Cameras, Scene } from 'phaser';
 
-import { ZOOM } from '../utils/settings';
+import { SERVER_URL, ZOOM } from '../utils/settings';
 import Player from '../objects/player';
 import Map from '../objects/map';
 import minimalPixel from '../assets/fonts/minimalpixel.png';
@@ -19,6 +19,9 @@ export default class MainScene extends Scene {
   }
 
   create () {
+    this.server = this.webSocket.add(SERVER_URL);
+    this.username = globalThis.localStorage.getItem('username');
+
     this.player.create();
 
     this.cameras.main.startFollow(this.player, true).setZoom(ZOOM);
@@ -73,6 +76,13 @@ export default class MainScene extends Scene {
     this.cameras.main.fadeIn(500);
     this.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
       this.player.canMove = true;
+
+      this.server.send('player-init', {
+        username: this.username,
+        x: this.player.x,
+        y: this.player.y,
+        direction: this.player.direction,
+      }, { zone: this.map.id });
     });
   }
 
