@@ -21,8 +21,12 @@ export default class MainScene extends Scene {
   create () {
     this.player.create();
 
-    this.cameras.main.startFollow(this.player, true);
-    this.cameras.main.setZoom(ZOOM);
+    this.cameras.main.startFollow(this.player, true).setZoom(ZOOM);
+
+    this.minimap = this.cameras
+      .add(28, 28, 22 * ZOOM * 2, 20 * ZOOM * 2, false, 'minimap')
+      .setZoom(0.05)
+      .startFollow(this.player);
 
     this.map.create();
 
@@ -56,8 +60,9 @@ export default class MainScene extends Scene {
 
   onMapReady () {
     this.player.setDepth(this.map.getPlayerDepth());
-    this.cameras.main
-      .setBounds(0, 0, this.map.getWidth(), this.map.getHeight());
+    [this.cameras.main, this.minimap].forEach(camera =>
+      camera.setBounds(0, 0, this.map.getWidth(), this.map.getHeight())
+    );
 
     this.map.events.once('goTo', mapId => {
       if (this.map.hasMap(mapId)) {

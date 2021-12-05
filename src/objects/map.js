@@ -139,6 +139,7 @@ export default class Map {
       const pnj = new PNJ(this.scene, this.player, pnjId, obj.x, obj.y);
       pnj.create().setDepth(depth);
 
+      this.scene.minimap.ignore(pnj);
       this.pnjs.push(pnj);
     }
   }
