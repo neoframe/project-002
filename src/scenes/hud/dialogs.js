@@ -22,11 +22,16 @@ export default class DialogsUI {
     this.scene.input.keyboard.on('keydown-ESC', this.hideDialog.bind(this));
   }
 
-  getDialog (dialogs, id) {
+  getDialog (dialogs, id, opts) {
     id = id ? id : 'start';
 
-    return dialogs.find(d => d.id === id) ||
-      dialogs.find(d => d.id === 'default');
+    const dialog = dialogs.find(d => d.id === id);
+
+    if (!dialog || (dialog.condition && !dialog.condition(opts))) {
+      return dialogs.find(d => d.id === 'default');
+    }
+
+    return dialog;
   }
 
   onOpenDialogModal (opts = {}) {
@@ -36,7 +41,7 @@ export default class DialogsUI {
 
     this.scene.game.events.emit('lock-ui');
 
-    const dialog = this.getDialog(opts.dialogs, opts.content);
+    const dialog = this.getDialog(opts.dialogs, opts.content, opts);
 
     this.dialogModal = this.scene.rexUI.add
       .dialog({
@@ -79,11 +84,15 @@ export default class DialogsUI {
     this.scene.game.events.emit('unlock-ui');
   }
 
-  createAction (opts = {}) {
+  createAction (button = {}) {
+    button = typeof button === 'string' ? { text: button, end: true } : button;
+
     return this.scene.rexUI.add.label({
-      name: opts.end ? 'close' : 'dialog',
-      text: this.scene.add.bitmapText(0, 0, 'minimal-pixel', opts.text, 24),
-    }).setData(opts).setInteractive({ useHandCursor: true });
+      name: button.end
+        ? 'close'
+        : button.action ? 'action' : 'dialog',
+      text: this.scene.add.bitmapText(0, 0, 'minimal-pixel', button.text, 24),
+    }).setData(button).setInteractive({ useHandCursor: true });
   }
 
   createDialogCloseButton () {
@@ -102,13 +111,21 @@ export default class DialogsUI {
       case 'close':
         this.hideDialog();
         break;
-      case 'dialog':
+
+      case 'dialog': {
         this.hideDialog();
+        const to = button.getData('to');
 
         this.onOpenDialogModal({
           ...opts,
-          content: button.getData('to'),
+          content: typeof to === 'function' ? to(opts) : to,
         });
+        break;
+      }
+
+      case 'action':
+        this.hideDialog();
+        button.getData('action')?.(opts);
 
         break;
     }

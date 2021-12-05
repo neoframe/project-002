@@ -30,16 +30,14 @@ export default {
   }, {
     id: 'fine',
     text: 'Alright cool! I\'m fine too!',
-    options: [{
-      text: 'Ok thanks',
-      end: true,
-    }],
+    options: ['Ok thanks'],
   }, {
     id: 'not-so-good',
     text: 'Oh no! What happened?',
     options: [{
       text: 'I lost my wallet',
-      to: 'lost-wallet',
+      to: ({ player }) =>
+        player.hasFlag('martine-gave-money') ? 'gave-money' : 'lost-wallet',
     }, {
       text: 'I\'m fine actually',
       to: 'fine',
@@ -47,9 +45,21 @@ export default {
   }, {
     id: 'default',
     text: 'I think I\'m gonna go home!',
+    options: ['Have fun!'],
+  }, {
+    id: 'lost-wallet',
+    text: 'Here, take this, I don\'t need it anyway',
+    condition: ({ player }) => !player.hasFlag('martine-gave-money'),
     options: [{
-      text: 'Have fun!',
-      end: true,
+      text: 'Thanks',
+      action: ({ player }) => {
+        player.addMoney(100);
+        player.addFlag('martine-gave-money');
+      },
     }],
+  }, {
+    id: 'gave-money',
+    text: 'I hope the money I gave you was helpful!',
+    options: ['Thanks'],
   }],
 };

@@ -148,6 +148,7 @@ export default class PNJ extends GameObjects.Sprite {
       content: 'start',
       dialogs: this.settings.dialogs,
       pnj: this,
+      player: this.player,
     });
   }
 }

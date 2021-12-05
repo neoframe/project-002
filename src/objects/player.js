@@ -28,6 +28,7 @@ export default class Player extends GameObjects.Sprite {
   #maxLife = 100;
   #mana = 100;
   #maxMana = 100;
+  #flags = [];
 
   constructor (scene, ...args) {
     super(scene, ...args);
@@ -149,6 +150,10 @@ export default class Player extends GameObjects.Sprite {
     return this.#money;
   }
 
+  addMoney (amount = 0) {
+    this.#money += amount;
+  }
+
   getLife () {
     return this.#life;
   }
@@ -163,5 +168,15 @@ export default class Player extends GameObjects.Sprite {
 
   getMaxMana () {
     return this.#maxMana;
+  }
+
+  hasFlag (flag) {
+    return this.#flags.includes(flag);
+  }
+
+  addFlag (flag) {
+    if (!this.hasFlag(flag)) {
+      this.#flags.push(flag);
+    }
   }
 }
