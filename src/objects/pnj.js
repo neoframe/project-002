@@ -26,11 +26,11 @@ export default class PNJ extends GameObjects.Sprite {
       .createAnimations()
       .createNameLabel();
 
-    this.on('pointerover', this.onMouseOver.bind(this));
-    this.on('pointerout', this.onMouseOut.bind(this));
-    this.on('pointerup', this.onClick.bind(this));
-    this.scene.game.events.on('lock-ui', this.onUILock.bind(this));
-    this.scene.game.events.on('unlock-ui', this.onUIUnlock.bind(this));
+    this.on('pointerover', this.onMouseOver, this);
+    this.on('pointerout', this.onMouseOut, this);
+    this.on('pointerup', this.onClick, this);
+    this.scene.game.events.on('lock-ui', this.onUILock, this);
+    this.scene.game.events.on('unlock-ui', this.onUIUnlock, this);
 
     return this;
   }
@@ -149,5 +149,15 @@ export default class PNJ extends GameObjects.Sprite {
       pnj: this,
       player: this.player,
     });
+  }
+
+  destroy () {
+    this.removeInteractive();
+    this.off('pointerover', this.onMouseOver, this);
+    this.off('pointerout', this.onMouseOut, this);
+    this.off('pointerup', this.onClick, this);
+    this.scene.game.events.off('lock-ui', this.onUILock, this);
+    this.scene.game.events.off('unlock-ui', this.onUIUnlock, this);
+    super.destroy();
   }
 }

@@ -18,8 +18,8 @@ export default class DialogsUI {
   }
 
   create () {
-    this.scene.game.events.on('open-dialog', this.onOpenDialogModal.bind(this));
-    this.scene.input.keyboard.on('keydown-ESC', this.hideDialog.bind(this));
+    this.scene.game.events.on('open-dialog', this.onOpenDialogModal, this);
+    this.scene.input.keyboard.on('keydown-ESC', this.hideDialog, this);
   }
 
   getDialog (dialogs, id, opts) {

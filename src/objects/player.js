@@ -73,8 +73,8 @@ export default class Player extends GameObjects.Sprite {
 
     this.anims.play('player-idle-bottom', true);
 
-    this.scene.game.events.on('lock-ui', this.onUILock.bind(this));
-    this.scene.game.events.on('unlock-ui', this.onUIUnlock.bind(this));
+    this.scene.game.events.on('lock-ui', this.onUILock, this);
+    this.scene.game.events.on('unlock-ui', this.onUIUnlock, this);
   }
 
   update () {
