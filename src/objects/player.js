@@ -1,7 +1,8 @@
 import { GameObjects, Input } from 'phaser';
 
-import charset from '../assets/images/charset.png';
 import { PLAYER_SPEED } from '../utils/settings';
+import Weapon from './weapon';
+import charset from '../assets/images/charset.png';
 
 export default class Player extends GameObjects.Sprite {
   static WIDTH = 32;
@@ -18,6 +19,14 @@ export default class Player extends GameObjects.Sprite {
       TOP: [118, 123],
       LEFT: [124, 129],
       BOTTOM: [130, 135],
+    },
+    STAB: {
+      RIGHT: [840, 845],
+      TOP: [846, 851],
+      LEFT: [852, 857],
+      BOTTOM: [858, 863],
+      repeat: 0,
+      frameRate: 15,
     },
   };
 
@@ -47,6 +56,9 @@ export default class Player extends GameObjects.Sprite {
     this.scene.matter.body.setInertia(this.body, Infinity);
     this.scene.add.existing(this);
 
+    this.weapon = new Weapon(this);
+    this.weapon.create();
+
     // Init keys
     this.scene.cursors = this.scene.input.keyboard.createCursorKeys();
     ['z', 'q', 's', 'd'].forEach(k => {
@@ -55,7 +67,7 @@ export default class Player extends GameObjects.Sprite {
     });
 
     // Init animations
-    ['idle', 'walk'].forEach(anim => {
+    ['idle', 'walk', 'stab'].forEach(anim => {
       ['right', 'top', 'left', 'bottom'].forEach(dir => {
         const frames = Player.FRAMES[anim.toUpperCase()][dir.toUpperCase()];
 
@@ -65,8 +77,8 @@ export default class Player extends GameObjects.Sprite {
             start: frames[0],
             end: frames[1],
           }),
-          frameRate: 10,
-          repeat: -1,
+          frameRate: Player.FRAMES[anim.toUpperCase()].frameRate ?? 10,
+          repeat: Player.FRAMES[anim.toUpperCase()].repeat ?? -1,
         });
       });
     });
@@ -75,15 +87,17 @@ export default class Player extends GameObjects.Sprite {
 
     this.scene.game.events.on('lock-ui', this.onUILock, this);
     this.scene.game.events.on('unlock-ui', this.onUIUnlock, this);
+    this.scene.input.keyboard.on('keyup-SPACE', this.onAttack, this);
   }
 
   update () {
     this.move();
     this.setAnimation();
+    this.weapon.update();
   }
 
   move () {
-    if (!this.#canMove) {
+    if (!this.#canMove || this.attacking) {
       this.scene.matter.setVelocity(this.body, 0, 0);
 
       return;
@@ -123,7 +137,9 @@ export default class Player extends GameObjects.Sprite {
   getAnimationName () {
     const { x, y } = this.body.velocity;
 
-    if (x === 0 && y === 0) {
+    if (this.attacking) {
+      return `player-stab-${this.direction}`;
+    } else if (x === 0 && y === 0) {
       return `player-idle-${this.direction}`;
     } else {
       return `player-walk-${this.direction}`;
@@ -136,6 +152,20 @@ export default class Player extends GameObjects.Sprite {
     if (animationName !== this.anims.getName()) {
       this.anims.play(animationName, true);
     }
+  }
+
+  onAttack () {
+    if (this.attacking) {
+      return;
+    }
+
+    this.attacking = true;
+    this.once('animationcomplete', this.onAttackComplete, this);
+    this.weapon.attack(this.direction);
+  }
+
+  onAttackComplete () {
+    this.attacking = false;
   }
 
   onUILock () {
@@ -178,5 +208,18 @@ export default class Player extends GameObjects.Sprite {
     if (!this.hasFlag(flag)) {
       this.#flags.push(flag);
     }
+  }
+
+  setDepth (depth) {
+    this.weapon.setDepth(depth + 1);
+    super.setDepth(depth);
+  }
+
+  destroy () {
+    this.scene.game.events.off('lock-ui', this.onUILock, this);
+    this.scene.game.events.off('unlock-ui', this.onUIUnlock, this);
+    this.scene.input.keyboard.off('keyup-SPACE', this.onAttack, this);
+    this.weapon.destroy();
+    super.destroy();
   }
 }
