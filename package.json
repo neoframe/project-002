@@ -5,12 +5,11 @@
   "repository": "https://github.com/neoframe/project-002.git",
   "author": "dackmin <ugo@poool.fr>",
   "scripts": {
-    "serve": "node ./script/serve.js",
-    "serve:client": "webpack serve --config ./webpack.config.js",
+    "serve:all": "node ./script/serve.js",
+    "serve": "webpack serve --config ./webpack.config.js",
     "serve:server": "nodemon --watch ./server --exec node ./server/index.js"
   },
   "dependencies": {
-    "@poool/junipero-utils": "2.0.0-alpha.0",
     "core-js": "3.19.1",
     "phaser": "3.55.2",
     "phaser3-rex-plugins": "1.1.63",
