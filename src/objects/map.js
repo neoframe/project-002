@@ -1,9 +1,11 @@
 import { Events } from 'phaser';
 
 import PNJ from './pnj';
+import Enemy from './enemy';
 import * as tilesets from '../assets/images';
 import * as maps from '../assets/maps';
 import * as pnjs from '../assets/pnjs';
+import * as enemies from '../assets/enemies';
 
 export default class Map {
   events = new Events.EventEmitter();
@@ -13,6 +15,7 @@ export default class Map {
   actions = [];
   startPositions = [];
   pnjs = [];
+  enemies = [];
   playerDepth = 0;
 
   constructor (scene, player) {
@@ -33,14 +36,21 @@ export default class Map {
         frameHeight: v.charset.frameHeight,
       });
     });
+
+    Object.entries(enemies).forEach(([k, v]) => {
+      scene.load.spritesheet(`enemy-${k}`, v.charset.image, {
+        frameWidth: v.charset.frameWidth,
+        frameHeight: v.charset.frameHeight,
+      });
+    });
   }
 
   create () {}
 
   reset () {
-    [...this.obstacles, ...this.actions, ...this.pnjs]
+    [...this.obstacles, ...this.actions, ...this.pnjs, ...this.enemies]
       .forEach(o => o && this.scene.matter.world.remove(o));
-    [...this.pnjs]
+    [...this.pnjs, ...this.enemies]
       .forEach(o => o && o.destroy());
     this.tilemap?.destroy();
     this.tilesets = [];
@@ -77,6 +87,7 @@ export default class Map {
         this.initActions(layer, obj, options);
         this.initPlayerProps(layer, obj, options);
         this.initPnjs(layer, obj, options);
+        this.initEnemies(layer, obj, options);
       });
     });
 
@@ -141,6 +152,20 @@ export default class Map {
 
       this.scene.minimap.ignore(pnj);
       this.pnjs.push(pnj);
+    }
+  }
+
+  initEnemies (layer, obj) {
+    const depth = this.getProperty(layer.properties, 'depth');
+
+    if (this.getProperty(obj.properties, 'enemy')) {
+      const enemyId = this.getProperty(obj.properties, 'enemy');
+
+      const enemy = new Enemy(this.scene, this.player, enemyId, obj.x, obj.y);
+      enemy.create().setDepth(depth);
+
+      this.scene.minimap.ignore(enemy);
+      this.enemies.push(enemy);
     }
   }
 

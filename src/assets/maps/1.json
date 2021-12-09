@@ -151,6 +151,29 @@
                  "width":0,
                  "x":1251.12540192926,
                  "y":665.594855305466
+                }, 
+                {
+                 "height":0,
+                 "id":103,
+                 "name":"",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"player",
+                         "type":"bool",
+                         "value":true
+                        }, 
+                        {
+                         "name":"start",
+                         "type":"int",
+                         "value":5
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":3151.271915266,
+                 "y":719.695826669483
                 }],
          "opacity":1,
          "properties":[
@@ -1683,6 +1706,28 @@
                  "width":37.8336510962822,
                  "x":958.468346380107,
                  "y":614.275500476644
+                }, 
+                {
+                 "height":66.6887956788074,
+                 "id":104,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"action",
+                         "type":"bool",
+                         "value":true
+                        }, 
+                        {
+                         "name":"goTo",
+                         "type":"int",
+                         "value":5
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":10.8633332327468,
+                 "x":3191.40589637587,
+                 "y":687.709345484173
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -1691,7 +1736,7 @@
          "y":0
         }],
  "nextlayerid":10,
- "nextobjectid":103,
+ "nextobjectid":105,
  "orientation":"orthogonal",
  "renderorder":"left-down",
  "tiledversion":"1.7.2",
@@ -1714,12 +1759,12 @@
          "columns":17,
          "firstgid":157,
          "image":"..\/images\/tileset-village.png",
-         "imageheight":864,
+         "imageheight":1024,
          "imagewidth":544,
          "margin":0,
          "name":"village",
          "spacing":0,
-         "tilecount":459,
+         "tilecount":544,
          "tileheight":32,
          "tiles":[
                 {

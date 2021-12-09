@@ -38,7 +38,7 @@ export default class MainScene extends Scene {
     });
 
     this.player.canMove = false;
-    this.map.init(1);
+    this.map.init(5);
 
     this.scene.launch('HUDScene');
     this.onMapReady();
