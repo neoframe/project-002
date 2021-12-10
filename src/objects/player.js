@@ -1,4 +1,4 @@
-import { GameObjects, Input } from 'phaser';
+import { Animations, GameObjects, Input, Math as PMath } from 'phaser';
 
 import { PLAYER_SPEED } from '../utils/settings';
 import Weapon from './weapon';
@@ -160,7 +160,18 @@ export default class Player extends GameObjects.Sprite {
     }
 
     this.attacking = true;
-    this.once('animationcomplete', this.onAttackComplete, this);
+
+    const enemy = this.map?.enemies.getChildren().find(e =>
+      PMath.Distance.Between(e.x, e.y, this.x, this.y) < 50);
+
+    if (enemy && !enemy.isDead()) {
+      const angle = PMath.Angle.Between(this.x, this.y, enemy.x, enemy.y);
+      this.scene.matter.applyForceFromAngle(enemy, 100, angle);
+      enemy.damage(Weapon.DPS);
+    }
+
+    this.once(
+      Animations.Events.ANIMATION_COMPLETE, this.onAttackComplete, this);
     this.weapon.attack(this.direction);
   }
 

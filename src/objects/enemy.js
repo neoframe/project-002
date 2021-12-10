@@ -1,13 +1,19 @@
-import { GameObjects, Math as PMath } from 'phaser';
+import { Events, GameObjects, Math as PMath } from 'phaser';
 
 import * as enemies from '../assets/enemies';
 
 export default class Enemy extends GameObjects.Sprite {
+  #life = 100;
+  #dead = false;
+  #damaged = false;
+  events = new Events.EventEmitter();
+
   constructor (scene, player, name, ...args) {
     super(scene, ...args);
     this.name = name;
     this.player = player;
     this.settings = enemies[name];
+    this.#life = this.settings.maxLife ?? 100;
   }
 
   create () {
@@ -16,7 +22,12 @@ export default class Enemy extends GameObjects.Sprite {
       .createBody()
       .createAnimations();
 
-    this.anims.play(this.getAnimationName('walk'), true);
+    this.lifebar = this.scene.add
+      .rectangle(this.x, this.y - 40, this.width * 0.6, 3, 0xFF0000)
+      .setOrigin(0)
+      .setVisible(false);
+
+    this.anims.play(this.getAnimationName('idle'), true);
 
     return this;
   }
@@ -24,8 +35,8 @@ export default class Enemy extends GameObjects.Sprite {
   createBody () {
     this.scene.matter.add.gameObject(this, {
       ignoreGravity: true,
-      // isStatic: true,
       friction: 1,
+      mass: 1000,
       shape: {
         type: 'rectangle',
         width: this.settings.charset.bodyWidth,
@@ -42,17 +53,18 @@ export default class Enemy extends GameObjects.Sprite {
   }
 
   createAnimations () {
-    ['walk'].forEach(anim => {
-      const frames = this.settings.charset.frames[anim];
+    ['idle', 'walk'].forEach(anim => {
+      const config = this.settings.charset.frames[anim];
+      const { frames = config, frameRate = 10, repeat = -1 } = config;
 
       this.anims.create({
         key: this.getAnimationName(anim),
         frames: this.anims.generateFrameNumbers(this.getTextureName(), {
-          start: frames[0],
-          end: frames[1],
+          start: frames?.[0],
+          end: frames?.[1],
         }),
-        frameRate: this.settings.charset.animations?.frameRate ?? 10,
-        repeat: this.settings.charset.animations?.repeat ?? -1,
+        frameRate,
+        repeat,
       });
     });
 
@@ -67,7 +79,7 @@ export default class Enemy extends GameObjects.Sprite {
     return `${this.getTextureName()}-${type}`;
   }
 
-  preUpdate () {
+  update () {
     if (this.player.x > this.x) {
       this.setFlipX(false);
     } else {
@@ -87,10 +99,42 @@ export default class Enemy extends GameObjects.Sprite {
         Math.cos(angle) * speed,
         Math.sin(angle) * speed
       );
-      // this.anims.play(this.getAnimationName('walk'), true);
+      this.setAnimation(this.getAnimationName('walk'));
     } else {
-      this.scene.matter.setVelocity(this.body, 0, 0);
-      // this.anims.stop();
+      this.setAnimation(this.getAnimationName('idle'));
     }
+
+    this.lifebar.setPosition(
+      this.x - (this.width * 0.6) / 2,
+      this.y - 40
+    );
+    this.lifebar.width = (this.width * 0.6) *
+      (this.#life / this.settings.maxLife);
+  }
+
+  setAnimation (name) {
+    if (name !== this.anims.getName()) {
+      this.anims.play(name, true);
+    }
+  }
+
+  damage (dps) {
+    this.#damaged = true;
+    this.#life = Math.max(0, this.#life - dps);
+    this.lifebar.setVisible(true);
+
+    if (!this.#life) {
+      this.#dead = true;
+      this.events.emit('die');
+    }
+  }
+
+  isDead () {
+    return this.#dead;
+  }
+
+  destroy () {
+    this.lifebar.destroy();
+    super.destroy();
   }
 }

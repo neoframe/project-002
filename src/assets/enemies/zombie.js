@@ -1,6 +1,7 @@
 import zombie from '../images/charset-zombie.png';
 
 export default {
+  maxLife: 100,
   charset: {
     image: zombie,
     frameWidth: 64,
@@ -8,7 +9,11 @@ export default {
     bodyWidth: 31,
     bodyHeight: 38,
     frames: {
-      walk: [0, 7],
+      idle: {
+        frames: [0, 2],
+        frameRate: 5,
+      },
+      walk: [0, 4],
     },
   },
 };

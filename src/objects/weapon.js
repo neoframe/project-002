@@ -1,6 +1,8 @@
 import { Animations, GameObjects } from 'phaser';
 
 export default class Weapon extends GameObjects.Sprite {
+  static DPS = 30;
+
   static FRAMES = {
     RIGHT: [864, 869],
     TOP: [870, 875],

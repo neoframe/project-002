@@ -14,13 +14,12 @@ export default class Map {
   obstacles = [];
   actions = [];
   startPositions = [];
-  pnjs = [];
-  enemies = [];
   playerDepth = 0;
 
   constructor (scene, player) {
     this.scene = scene;
     this.player = player;
+    this.player.map = this;
 
     Object.entries(tilesets).forEach(([k, v]) => {
       scene.load.image(`tileset-${k}`, v);
@@ -45,20 +44,22 @@ export default class Map {
     });
   }
 
-  create () {}
+  create () {
+    this.pnjs = this.scene.add.group();
+    this.enemies = this.scene.add.group({ runChildUpdate: true });
+  }
 
   reset () {
-    [...this.obstacles, ...this.actions, ...this.pnjs, ...this.enemies]
+    [...this.obstacles, ...this.actions]
       .forEach(o => o && this.scene.matter.world.remove(o));
-    [...this.pnjs, ...this.enemies]
-      .forEach(o => o && o.destroy());
+    this.pnjs?.clear(true, true);
+    this.enemies?.clear(true, true);
     this.tilemap?.destroy();
     this.tilesets = [];
     this.layers = [];
     this.obstacles = [];
     this.actions = [];
     this.startPositions = [];
-    this.pnjs = [];
   }
 
   init (mapId, options = {}) {
@@ -151,7 +152,7 @@ export default class Map {
       pnj.create().setDepth(depth);
 
       this.scene.minimap.ignore(pnj);
-      this.pnjs.push(pnj);
+      this.pnjs.add(pnj);
     }
   }
 
@@ -163,9 +164,13 @@ export default class Map {
 
       const enemy = new Enemy(this.scene, this.player, enemyId, obj.x, obj.y);
       enemy.create().setDepth(depth);
+      enemy.events.once('die', () => {
+        this.enemies.killAndHide(enemy);
+        enemy.destroy();
+      });
 
       this.scene.minimap.ignore(enemy);
-      this.enemies.push(enemy);
+      this.enemies.add(enemy);
     }
   }
 
