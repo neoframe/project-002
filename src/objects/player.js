@@ -1,4 +1,4 @@
-import { Animations, GameObjects, Input, Math as PMath } from 'phaser';
+import { Animations, Events, GameObjects, Input, Math as PMath } from 'phaser';
 
 import { PLAYER_SPEED } from '../utils/settings';
 import Weapon from './weapon';
@@ -30,8 +30,10 @@ export default class Player extends GameObjects.Sprite {
     },
   };
 
+  events = new Events.EventEmitter();
   direction = 'bottom';
   #canMove = true;
+  #dead = false;
   #money = 0;
   #life = 100;
   #maxLife = 100;
@@ -88,6 +90,7 @@ export default class Player extends GameObjects.Sprite {
     this.scene.game.events.on('lock-ui', this.onUILock, this);
     this.scene.game.events.on('unlock-ui', this.onUIUnlock, this);
     this.scene.input.keyboard.on('keyup-SPACE', this.onAttack, this);
+    this.scene.events.on('mapready', this.onRevive, this);
   }
 
   update () {
@@ -155,7 +158,7 @@ export default class Player extends GameObjects.Sprite {
   }
 
   onAttack () {
-    if (this.attacking) {
+    if (this.attacking || this.isDead()) {
       return;
     }
 
@@ -173,6 +176,18 @@ export default class Player extends GameObjects.Sprite {
     this.once(
       Animations.Events.ANIMATION_COMPLETE, this.onAttackComplete, this);
     this.weapon.attack(this.direction);
+  }
+
+  damage (dps) {
+    if (this.isDead()) {
+      return;
+    }
+
+    this.#life = Math.max(0, this.#life - dps);
+
+    if (!this.#life) {
+      this.die();
+    }
   }
 
   onAttackComplete () {
@@ -226,7 +241,31 @@ export default class Player extends GameObjects.Sprite {
     super.setDepth(depth);
   }
 
+  isDead () {
+    return this.#dead;
+  }
+
+  die () {
+    this.#dead = true;
+    this.#canMove = false;
+    this.scene.matter.pause(this.body);
+    this.events.emit('die');
+  }
+
+  onRevive () {
+    this.#canMove = true;
+    this.scene.matter.resume(this.body);
+
+    if (!this.#dead) {
+      return;
+    }
+
+    this.#dead = false;
+    this.#life = this.#maxLife;
+  }
+
   destroy () {
+    this.scene.events.off('mapready', this.onRevive, this);
     this.scene.game.events.off('lock-ui', this.onUILock, this);
     this.scene.game.events.off('unlock-ui', this.onUIUnlock, this);
     this.scene.input.keyboard.off('keyup-SPACE', this.onAttack, this);

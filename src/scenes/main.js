@@ -38,6 +38,10 @@ export default class MainScene extends Scene {
     });
 
     this.player.canMove = false;
+    this.player.events.on('die', () => {
+      this.goTo(1, { ignoreFrom: true });
+    });
+
     this.map.init(5);
 
     this.scene.launch('HUDScene');
@@ -48,7 +52,7 @@ export default class MainScene extends Scene {
     this.player.update();
   }
 
-  goTo (mapId) {
+  goTo (mapId, { ignoreFrom = false } = {}) {
     this.player.canMove = false;
     this.map.events.once('startPosition', ({ x, y }) => {
       this.player.setPosition(x, y);
@@ -56,7 +60,7 @@ export default class MainScene extends Scene {
 
     this.cameras.main.fadeOut(500);
     this.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
-      this.map.init(mapId, { from: this.map.id });
+      this.map.init(mapId, { from: !ignoreFrom && this.map.id });
       this.onMapReady();
     });
   }
@@ -75,7 +79,7 @@ export default class MainScene extends Scene {
 
     this.cameras.main.fadeIn(500);
     this.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
-      this.player.canMove = true;
+      this.events.emit('mapready');
 
       // this.server.send('player-init', {
       //   username: this.username,

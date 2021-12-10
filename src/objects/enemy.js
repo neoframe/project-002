@@ -6,6 +6,7 @@ export default class Enemy extends GameObjects.Sprite {
   #life = 100;
   #dead = false;
   #damaged = false;
+  #attacking = false;
   events = new Events.EventEmitter();
 
   constructor (scene, player, name, ...args) {
@@ -104,6 +105,12 @@ export default class Enemy extends GameObjects.Sprite {
       this.setAnimation(this.getAnimationName('idle'));
     }
 
+    if (distanceToPlayer < 50) {
+      this.attack();
+    } else {
+      this.attackTimer?.destroy();
+    }
+
     this.lifebar.setPosition(
       this.x - (this.width * 0.6) / 2,
       this.y - 40
@@ -116,6 +123,22 @@ export default class Enemy extends GameObjects.Sprite {
     if (name !== this.anims.getName()) {
       this.anims.play(name, true);
     }
+  }
+
+  attack () {
+    if (this.#attacking) {
+      return;
+    }
+
+    this.#attacking = true;
+    this.attackTimer?.destroy();
+    this.attackTimer = this.scene.time.addEvent({
+      delay: 500,
+      callback: () => {
+        this.player.damage(this.settings.dps ?? 20 / 2);
+        this.#attacking = false;
+      },
+    });
   }
 
   damage (dps) {

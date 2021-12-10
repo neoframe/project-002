@@ -2,6 +2,7 @@ import zombie from '../images/charset-zombie.png';
 
 export default {
   maxLife: 100,
+  dps: 20,
   charset: {
     image: zombie,
     frameWidth: 64,
